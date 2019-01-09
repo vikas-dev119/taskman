@@ -5,8 +5,8 @@
     - Python3.6
     - Mysql5
 
-* The First directory is taskman, go inside directory using 
-    - cd taskman/
+* clone git repo 
+    - https://github.com/vikas-git/taskman.git
 
 * Create virtualenv and activate via using given command
     - virtualenv -p python3.6 venv
