@@ -1,0 +1,46 @@
+{% extends "partial/layout.html" %}
+{% block set_title %} TaskMan - Activity List {% endblock set_title %}
+
+{% block page_heading %}Activity List{% endblock %}
+
+{% block page_content %}
+
+    <div class="row mb-10">
+        <div class="col-md-12">
+            <div class="pull-right" role="toolbar" aria-label="Page Actions">
+                <div class="btn-group" role="group" aria-label="Page Action">
+                    <a href="{% url 'task-list' %}" class="btn btn-primary" title="Back">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="flash_msg">{% include "partial/msg-temp.html" %}</div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ activity.message }}</td>
+                                <td>{{ activity.created_on|date:"d M, Y" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="100%">No Records found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock page_content %}

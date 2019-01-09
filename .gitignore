@@ -1,0 +1,7 @@
+*.pyc
+
+#Ignore these directories
+__pycache__
+
+venv/*
+.vscode/*

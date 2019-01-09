@@ -1,0 +1,136 @@
+{% extends "partial/layout.html" %}
+{% block set_title %} TaskMan - Task List {% endblock set_title %}
+
+{% block page_heading %}Task List{% endblock %}
+
+{% block page_content %}
+    <style>
+        a.disabled {
+            pointer-events: none;
+            cursor: default;
+        }
+    </style>
+
+    <div class="row mb-10">
+        <div class="col-md-12">
+            <div class="pull-right" role="toolbar" aria-label="Page Actions">
+                <div class="btn-group" role="group" aria-label="Page Action">
+                    <a href="{% url 'activity-list' %}" class="btn btn-primary" title="Show activity">My Activity</a>
+                </div>
+                
+                <div class="btn-group" role="group" aria-label="Page Action">
+                    <a href="javascript:;" class="btn btn-primary disabled btn_action" data-title='incomplete' title="InComplete">Incomplete</a>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="Page Action">
+                    <a href="javascript:;" class="btn btn-primary disabled btn_action" data-title='complete' title="Complete">Complete</a>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="Page Action">
+                    <a href="{% url 'task-add' %}" class="btn btn-primary" title="Create New Task">Add Task <i class="fa fa-plus" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="flash_msg">{% include "partial/msg-temp.html" %}</div>
+            <div class="table-responsive">
+                <table class="table table-hover" data-toggle="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th data-field="fruit" data-sortable="true">Name</th>
+                            <th data-field="deadline" data-sortable="true">Deadline</th>
+                            <th>Status</th>
+                            <th data-field="created_on" data-sortable="true">Created on</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="task_id" class="task_id" value="{{ task.id }}">
+                                </td>
+                                <td>{{ task.name }}</td>
+                                <td>{{ task.deadline|date:"d M, Y" }}</td>
+                                <td>
+                                    {% if task.status == 0 %}
+                                        <span>Incomplete</span>
+                                    {% else %}
+                                        <span>Complete</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ task.created_on|date:"d M, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'task-delete' task.id %}">Delete</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="100%">No Records found</td>
+                            </tr>
+                        {% endfor %}
+                        
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock page_content %}
+
+{% block more_css %}
+{% load static %} 
+    <link href="{% static 'css/bootstrap-table.css' %}" rel="stylesheet" type="text/css">
+{% endblock more_css %}
+
+{% block more_js %}
+{% load static %} 
+<script src="{% static 'js/bootstrap-table.js' %}" type="text/javascript"></script>
+{% endblock more_js %}
+
+
+{% block javascript %}
+    <script type="text/javascript">
+
+
+        $(function () {
+            $('.btn_action').click(function(){
+                var $action = $(this).data('title');
+                //get tasks
+                var tasks = [];
+                $.each($('.task_id:checked'), function(){            
+                    tasks.push($(this).val());
+                });
+
+                $.ajax({
+                    url: "{% url 'change-task-status'%}",
+                    type: "POST",
+                    data: {
+                        'action': $action,
+                        'tasks_id': tasks.join(","),
+                    },
+                    dataType: 'json',
+                    cache: false,
+                    success: function (response) {
+                        console.log(response)
+                        if(response.status == 'success'){
+                            location.reload();
+                        }
+                    }
+                });
+            });
+            
+            var $checkbox = $('.task_id');
+            $checkbox.on('change', function () {
+                if( $checkbox.filter(':checked').length > 0 ){
+                    $('.btn_action').removeClass('disabled')
+                }else{
+                    $('.btn_action').addClass('disabled')
+                }
+            });
+        });
+    </script>
+{% endblock javascript %}

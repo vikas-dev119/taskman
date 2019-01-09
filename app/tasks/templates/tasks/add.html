@@ -1,0 +1,24 @@
+{% extends "partial/layout.html" %}
+{% block set_title %} TaskMan - Add Task {% endblock set_title %}
+
+{% block page_heading %}Add Task{% endblock %}
+
+{% block page_content %}
+
+    <form role="form" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="fa {% cycle 'fa-user' 'fa-envelope' 'fa-lock' %}"></i></div>
+                    {{ field }}
+                </div>
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        <input type="submit" class="btn btn-lg btn-primary btn-block" value="Submit">
+    </form>
+
+{% endblock page_content %}
+
