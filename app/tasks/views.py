@@ -40,7 +40,7 @@ class AddTask(TemplateView):
                 # update activity
                 activity_dict = {
                     'user_id': user_id,
-                    'message': 'You created Task {}'.format(str(task_name))
+                    'message': 'You created Task, {}'.format(str(task_name))
                 }
                 Activity(**activity_dict).save()
                 messages.success(request, "Task add successfully !")
@@ -63,7 +63,7 @@ class DeleteTask(TemplateView):
             # update activity
             activity_dict = {
                 'user_id': user_id,
-                'message': 'You deleted Task {}'.format(str(task_name))
+                'message': 'You deleted Task, {}'.format(str(task_name))
             }
             Activity(**activity_dict).save()
         except Exception as e:

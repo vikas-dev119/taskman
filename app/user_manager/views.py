@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password, check_password
 
 from .forms import RegisterForm, LoginForm
 from .models import User
+from activities.models import Activity
 
 
 class IndexView(TemplateView):
@@ -35,6 +36,12 @@ class IndexView(TemplateView):
                         'email': user_obj.email,
                         'user_id': user_obj.id
                     }
+                    # update activity
+                    activity_dict = {
+                        'user_id': user_obj.id,
+                        'message': 'You Logged in'
+                    }
+                    Activity(**activity_dict).save()
                     return redirect('task-list')
                 else:
                     messages.error(request, "Invalid password.")
@@ -80,6 +87,8 @@ class RegisterView(TemplateView):
 
 class Logout(TemplateView):
     def get(self, request):
-        request.session['userauth'] = ''
+        activity_dict = {'user_id': request.session.get('userauth', {}).get('user_id'), 'message': 'You Logged out'}
+        Activity(**activity_dict).save()
+        del request.session['userauth']
         messages.success(request, 'Logged out successfully')
         return redirect('login')
